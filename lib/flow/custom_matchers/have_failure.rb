@@ -118,7 +118,7 @@ module CustomMatchers
     end
 
     def expected_details
-      @details.to_h
+      @expected_details ||= @details.to_h
     end
 
     def missing_details
@@ -134,7 +134,7 @@ module CustomMatchers
     end
 
     def wrong_details
-      matching_details.reject do |key|
+      @wrong_details ||= matching_details.reject do |key|
         actual_details[key] == expected_details[key]
       end
     end
