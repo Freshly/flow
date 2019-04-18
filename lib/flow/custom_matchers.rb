@@ -11,7 +11,7 @@ require_relative "custom_matchers/wrap_in_transaction"
 require_relative "custom_matchers/have_failure"
 
 module CustomMatchers
-  def have_failure(failure)
-    HaveFailure.new(failure)
+  def have_failure(problem)
+    HaveFailure.new(problem)
   end
 end
