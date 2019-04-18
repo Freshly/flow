@@ -56,10 +56,10 @@ module CustomMatchers
     private
 
     def operation_failure
-      is_flow? ? @object.failed_operation&.operation_failure : @object.operation_failure
+      flow? ? @object.failed_operation&.operation_failure : @object.operation_failure
     end
 
-    def is_flow?
+    def flow?
       @object.class <= Flow::FlowBase
     end
 
@@ -76,7 +76,7 @@ module CustomMatchers
     def matches_operation?
       return true unless @operation_class
 
-      raise NotImplementedError unless is_flow?
+      raise NotImplementedError unless flow?
 
       @operation_class == @object.failed_operation.class
     end
