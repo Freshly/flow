@@ -98,11 +98,11 @@ module CustomMatchers
     end
 
     def missing_details_description
-      "Expected failure to include details: :#{missing_details.join(", :").chomp}" if missing_details.any?
+      "Expected failure to include details: :#{missing_details.join(", :")}" if missing_details.any?
     end
 
     def extra_details_description
-      "Failure also included details: :#{extra_details.join(", :").chomp}" if extra_details.any?
+      "Failure also included details: :#{extra_details.join(", :")}" if extra_details.any?
     end
 
     def wrong_details_description
