@@ -32,7 +32,7 @@ module CustomMatchers
     def matches?(object)
       @object = object
       @operation_failure = operation_failure
-      matches_problem? && matches_details? && matches_operation?
+      problem_matches? && details_match? && operation_matches?
     end
 
     def with_details(details)
@@ -46,7 +46,7 @@ module CustomMatchers
     end
 
     def failure_message
-      matches_problem? ? details_description : problem_description
+      problem_matches? ? details_description : problem_description
     end
 
     def description
@@ -63,17 +63,17 @@ module CustomMatchers
       @object.class <= Flow::FlowBase
     end
 
-    def matches_problem?
+    def problem_matches?
       @expected_problem == @operation_failure&.problem
     end
 
-    def matches_details?
+    def details_match?
       return true unless @details
 
       [ wrong_details, missing_details, extra_details ].all?(&:none?)
     end
 
-    def matches_operation?
+    def operation_matches?
       return true unless @operation_class
 
       raise NotImplementedError unless flow?
