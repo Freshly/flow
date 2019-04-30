@@ -3,5 +3,5 @@
 require "rails_helper"
 
 RSpec.describe ApplicationFlow, type: :flow do
-  it { is_expected.to inherit_from FlowBase }
+  it { is_expected.to inherit_from Flow::FlowBase }
 end

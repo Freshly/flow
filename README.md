@@ -717,6 +717,21 @@ operation_failure11.problem # => :too_generous
 operation_failure11.details.disappointment_level # => :wow_very_disappoint
 ```
 
+You can also specify `if:` / `unless:` options to proactively trigger failures as guard clauses:
+
+ ```ruby
+class PassBottlesAround < ApplicationOperation
+  failure :too_dangerous, if: -> { state.bottle_of == "tequila" }
+  failure :not_dangerous_enough, unless: :drink_dangerous?
+  
+  private
+  
+  def drink_dangerous?
+    %[water juice soda].exclude? state.bottle_of 
+  end
+end
+ ```
+
 ### Callback Events
 
 Operations feature error events which are triggered when a problem occurs.

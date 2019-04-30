@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe <%= class_name %>, type: :operation do
   subject(:operation) { described_class.new(state) }
 
-  let(:state) { example_state_class.new(**state_input) }
+  let(:state) { example_state_class.new(**state_input).tap(&:validate) }
   let(:example_state_class) do
     Class.new(ApplicationState) do
       # argument :foo

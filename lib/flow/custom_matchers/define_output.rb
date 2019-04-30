@@ -20,8 +20,8 @@
 
 RSpec::Matchers.define :define_output do |output, default_value = nil|
   match do |state|
-    expect(state._outputs).to include output
     expect(state._defaults[output].value).to eq default_value unless default_value.nil?
+    expect(state._outputs).to include output
   end
   description { "define output outputoption}" }
   failure_message { |state| "expected #{state.class.name} to define output #{output} #{for_default(default_value)}" }

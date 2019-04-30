@@ -20,14 +20,13 @@ module Flow
 
         private
 
-        def failure(problem)
+        def failure(problem, **options)
           problem = problem.to_s.to_sym
-          warn(:problem_already_defined) if _failures.include? problem
-
           _failures << problem
           define_callbacks problem
           define_on_failure_for_problem(problem)
           define_fail_method_for_problem(problem)
+          define_proactive_failure_for_problem(problem, **options)
         end
 
         def define_on_failure_for_problem(problem)
@@ -42,6 +41,11 @@ module Flow
           return if method_defined?(problem_failure_name)
 
           define_method(problem_failure_name) { |**details| fail!(problem, **details) }
+        end
+
+        def define_proactive_failure_for_problem(problem, **options)
+          conditional_options = options.slice(:if, :unless)
+          set_callback(:execute, :before, -> { fail!(problem) }, **conditional_options) if conditional_options.present?
         end
       end
 

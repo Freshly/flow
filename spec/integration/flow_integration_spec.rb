@@ -257,7 +257,46 @@ RSpec.describe Flow, type: :integration do
     end
   end
 
-  context "when the second operation fails by a known error" do
+  context "when the second operation fails" do
+    let(:number_to_take_down) { 5 }
+
+    it_behaves_like "a failed flow", TakeBottlesDown, :too_greedy do
+      let(:expected_stanza) do
+        <<~STANZA.chomp
+          99 bottles of beer on the wall, 99 bottles of beer.
+          Something went wrong! It's the end of the song, and there's 99 bottles of beer on the wall.
+        STANZA
+      end
+    end
+  end
+
+  context "when the second operation fails proactively" do
+    let(:bottles_of) { "tequila" }
+
+    it_behaves_like "a failed flow", TakeBottlesDown, :too_dangerous do
+      let(:expected_stanza) do
+        <<~STANZA.chomp
+          99 bottles of tequila on the wall, 99 bottles of tequila.
+          Something went wrong! It's the end of the song, and there's 99 bottles of tequila on the wall.
+        STANZA
+      end
+    end
+  end
+
+  context "when the third operation fails" do
+    let(:number_to_take_down) { 4 }
+
+    it_behaves_like "a failed flow", PassBottlesAround, :too_generous do
+      let(:expected_stanza) do
+        <<~STANZA.chomp
+          99 bottles of beer on the wall, 99 bottles of beer.
+          You take 4 down.
+        STANZA
+      end
+    end
+  end
+
+  context "when the third operation fails by a known error" do
     let(:bottles) { Bottle.create(of: bottles_of, number_on_the_wall: starting_bottles) }
     let(:starting_bottles) { 4 }
     let(:number_to_take_down) { 3 }
@@ -275,27 +314,14 @@ RSpec.describe Flow, type: :integration do
     end
   end
 
-  context "when the second operation fails" do
-    let(:number_to_take_down) { 5 }
+  context "when the third operation fails proactively" do
+    let(:bottles_of) { "water" }
 
-    it_behaves_like "a failed flow", TakeBottlesDown, :too_greedy do
+    it_behaves_like "a failed flow", PassBottlesAround, :not_dangerous_enough do
       let(:expected_stanza) do
         <<~STANZA.chomp
-          99 bottles of beer on the wall, 99 bottles of beer.
-          Something went wrong! It's the end of the song, and there's 99 bottles of beer on the wall.
-        STANZA
-      end
-    end
-  end
-
-  context "when the third operation fails" do
-    let(:number_to_take_down) { 4 }
-
-    it_behaves_like "a failed flow", PassBottlesAround, :too_generous do
-      let(:expected_stanza) do
-        <<~STANZA.chomp
-          99 bottles of beer on the wall, 99 bottles of beer.
-          You take 4 down.
+          99 bottles of water on the wall, 99 bottles of water.
+          You take one down.
         STANZA
       end
     end

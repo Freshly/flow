@@ -32,6 +32,37 @@ RSpec.describe Flow::Operation::Failures, type: :module do
         from(false).
         to(true)
     end
+
+    shared_examples_for "a before execute callback is defined" do |method|
+      subject(:define_failure) { example_operation_class.__send__(:failure, problem, **options) }
+
+      before { allow(example_operation_class).to receive(:set_callback).and_call_original }
+
+      let(:options) do
+        {}.tap do |hash|
+          hash[method] = proc { true }
+        end
+      end
+      let(:expected_options) do
+        {}.tap { |hash| hash[method] = instance_of(Proc) }
+      end
+
+      before { define_failure }
+
+      it "defines a callback" do
+        expect(example_operation_class).
+          to have_received(:set_callback).
+          with(:execute, :before, instance_of(Proc), **expected_options)
+      end
+    end
+
+    context "when if: conditional is given" do
+      it_behaves_like "a before execute callback is defined", :if
+    end
+
+    context "when unless: conditional is given" do
+      it_behaves_like "a before execute callback is defined", :unless
+    end
   end
 
   describe ".inherited" do

@@ -7,7 +7,7 @@ RSpec.describe ApplicationOperation, type: :operation do
 
   let(:state) { double }
 
-  it { is_expected.to inherit_from OperationBase }
+  it { is_expected.to inherit_from Flow::OperationBase }
 
   describe "#execute" do
     subject(:execute) { operation.execute }

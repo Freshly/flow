@@ -6,6 +6,7 @@ class TakeBottlesDown < Flow::OperationBase
   class NonTakedownError < StandardError; end
 
   failure :too_greedy
+  failure :too_dangerous, if: -> { state.bottles_of == "tequila" }
   handle_error NonTakedownError do
     state.stanza.push "You took nothing down."
   end
