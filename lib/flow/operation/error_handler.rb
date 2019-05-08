@@ -20,6 +20,10 @@ module Flow
             rescue_from(error_class, &block)
           end
         end
+
+        def handle_errors(*errors)
+          errors.flatten.each(&method(:handle_error))
+        end
       end
     end
   end

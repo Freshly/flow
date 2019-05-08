@@ -17,12 +17,4 @@ RSpec.describe <%= class_name %>Flow, type: :flow do
 
     pending "describe the effects of a successful `Flow#flux` (or delete) #{__FILE__}"
   end
-
-  describe "#revert" do
-    before { flow.trigger! }
-
-    subject(:revert) { flow.revert }
-
-    pending "describe the effects of a successful `Flow#ebb` (or delete) #{__FILE__}"
-  end
 end

@@ -41,8 +41,6 @@ module Flow
     rescue StandardError => exception
       error :error_executing_operation, state: state, exception: exception
 
-      revert
-
       raise exception unless exception.is_a? Flow::Flux::Failure
     end
 

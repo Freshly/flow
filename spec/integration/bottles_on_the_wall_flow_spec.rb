@@ -12,5 +12,5 @@ RSpec.describe BottlesOnTheWallFlow, type: :flow do
   let(:expected_operations) { [ CountOutCurrentBottles, TakeBottlesDown, PassBottlesAround, CountOutCurrentBottles ] }
 
   it { is_expected.to use_operations(*expected_operations) }
-  it { is_expected.to wrap_in_transaction(only: :ebb) }
+  it { is_expected.to wrap_in_transaction }
 end

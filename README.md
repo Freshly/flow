@@ -21,9 +21,6 @@
    * [Exceptions](#exceptions)
    * [Failures](#failures)
    * [Callback Events](#callback-events)
-* [Reverting a Flow](#reverting-a-flow)
-   * [Undoing Operations](#undoing-operations)
-   * [Manual Revert](#manual-revert)
 * [Transactions](#transactions)
    * [Around a Flow](#around-a-flow)
    * [Around an Operation](#around-an-operation)
@@ -275,6 +272,23 @@ ExampleFlow.trigger(foo: :foo) # => ArgumentError (Missing argument: bar)
 ExampleFlow.trigger(foo: :foo, bar: :bar) # => #<ExampleFlow:0x00007ff7b7d92ae0 ...>
 ```
 
+By default, nil is a valid argument:
+
+```ruby
+ExampleFlow.trigger(foo: nil, bar: nil) # => #<ExampleFlow:0x10007ff7b7d92ae0 ...>
+```
+
+If you want to require a non-nil value for your argument, set the `allow_nil` option (`true` by default):
+
+```ruby
+class ExampleState < ApplicationState
+  argument :foo
+  argument :bar, allow_nil: false
+end
+
+ExampleFlow.trigger(foo: nil, bar: nil) # => ArgumentError (Missing argument: bar)
+```
+
 **Options** describe input which may be provided to define or override the initial state.
 
 Options can optionally define a default value. 
@@ -367,26 +381,7 @@ result.outputs.story.join("\n")
 # Yes sir, yes sir! Three bags full! 
 ```
 
-If you are creating something in your operation it's usually best practice to destroy it on `#undo`.
-
-Alternatively, you can use [Transactions](#transactions) on either the Flow or Operation to do the same.
-
-```ruby
-class ExampleState < ApplicationState
-  output :the_foo
-end
-
-class CreateFoo < ApplicationOperation
-  def behavior
-    state.the_foo = Foo.create!
-  end
-  
-  def undo
-    state.the_foo.destroy!
-    state.the_foo = nil
-  end
-end
-```
+If you are creating something in your operation it's usually best practice to use [Transactions](#transactions) on either the Flow or Operation.
 
 🙅‍ *Don't Make This Mistake*: Output is meant to capture data generated at runtime. Do not define data that COULD have been fetched in a standard state method into output:
 
@@ -409,7 +404,7 @@ Instead, always define data retrieval within the state and use output for create
 class GoodState < ApplicationState
   argument :foo
   
-  output :haz
+  output :gaz
   
   def bar
     Bar.where(foo: foo)
@@ -419,12 +414,7 @@ end
 
 class GoodOperation < ApplicationOperation
   def behavior
-    state.haz = Haz.create!(name: foo.name, count: bar.count)
-  end
-  
-  def undo
-    state.haz.destroy!
-    state.haz = nil
+    state.gaz = Gaz.create!(name: foo.name, count: bar.count)
   end
 end
 ```
@@ -772,119 +762,6 @@ class OperationThree < ApplicationOperation
 end
 ```
 
-## Reverting a Flow
-
-![Flow Revert](docs/images/revert.png)
-
-When something goes wrong in Flow `#revert` is called. 
-
-This calls `#rewind` on Operations to `#undo` their behavior.
-
-Reverting a Flow rewinds all its executed operations in reverse order (referred to as an **ebb**).
-
-Reverting is automatic and happens by default. You cannot opt out of the revert process, but you can choose to not define any `#undo` methods on your Operations.
- 
-```ruby
-class ExampleState < ApplicationState; end
-
-class GenericOperation < ApplicationOperation
-  def behavior
-    puts "#{self.class.name}#behavior"
-  end
-  
-  def undo
-    puts "#{self.class.name}#undo"
-  end
-end
-
-class ExampleFlow < ApplicationFlow
-  operations OperationOne, OperationTwo, OperationThree, OperationFour
-end
-
-class OperationOne < GenericOperation; end
-class OperationTwo < GenericOperation; end
-class OperationThree < GenericOperation
-  failure :bad_stuff
-  
-  def behavior
-    super
-    bad_stuff_failure!
-  end
-end
-class OperationFour < GenericOperation; end
-
-ExampleFlow.trigger
-
-# Prints:
-#  OperationOne#behavior
-#  OperationTwo#behavior
-#  OperationThree#behavior
-#  OperationTwo#undo
-#  OperationOne#undo
-```
-
-⚠️ **Heads Up**: For the Operation that failed, `#undo` is **NOT** called. Only operations which execute successfully can be undone.
-
-### Undoing Operations
-
-```ruby
-class ReserveQuantity < ApplicationOperation
-  delegate :product, :quantity, to: :state
-  delegate :available_inventory_count, to: :product
-  
-  def behavior
-    product.update!(available_inventory_count: available_inventory_count - quantity)
-  end
-  
-  def undo
-    product.update!(available_inventory_count: available_inventory_count + quantity)
-  end
-end
-```
-
-💁‍ *Note*: If you omit the `#undo`, a revert will essentially pass over that Operation. 
-
-If your Operation should not be undone and you want it to halt reverting, call a defined failure in `#undo`.
-
-```ruby
-class ExampleOperation < ApplicationOperation
-  failure :irreversible_behavior
-  
-  def behavior
-    PurchaseService.charge_customer(state.customer)
-  end
-  
-  def undo
-    irreversible_behavior_failure!
-  end
-end
-```
-
-### Manual Revert
-
-Flows in which an error occur are reverted automatically.
-
-You can also manually revert a completed flow, even if it was fully successful.
-
-```ruby
-class ExampleFlow < ApplicationFlow
-  operations OperationOne, OperationTwo, OperationThree, OperationFour
-end
-
-flow = SomeExampleFlow.trigger
-#  OperationOne#behavior
-#  OperationTwo#behavior
-#  OperationThree#behavior
-#  OperationFour#behavior
-flow.success? # => true
-flow.revert
-#  OperationFour#undo
-#  OperationThree#undo
-#  OperationTwo#undo
-#  OperationOne#undo
-flow.reverted? # => true
-```
-
 ## Transactions
 
 ![Flow Transactions](docs/images/transaction.png)
@@ -893,8 +770,6 @@ Flow features a callback driven approach to wrap business logic within database 
 
 Both **Flows** and **Operations** can be wrapped with a transaction.
 
-🚨 *Be Aware*: Unless otherwise specified, transactions apply to **both** success **and** failure cases. You can pass `only:` or `except:` options to `wrap_in_transaction` to alter this behavior.
- 
 ### Around a Flow
 
 Flows where no operation should be persisted unless all are successful should use a transaction.
@@ -904,18 +779,6 @@ class ExampleFlow < ApplicationFlow
   wrap_in_transaction
   
   operations OperationOne, OperationTwo, OperationThree
-end
-```
-
-Flows can transaction wrap `:flux` (caused by `#trigger`) or `:ebb` (caused by `#revert`).
-
-```ruby
-class ExampleFlow < ApplicationFlow
-  wrap_in_transaction only: :flux
-end
-
-class ExampleFlow < ApplicationFlow
-  wrap_in_transaction except: :ebb
 end
 ```
 
@@ -933,18 +796,6 @@ class OperationTwo < ApplicationFlow
 end
 ```
 
-Operations can transaction wrap `:behavior` or `:undo`.
-
-```ruby
-class ExampleOperation < ApplicationOperation
-  wrap_in_transaction only: :behavior
-end
-
-class ExampleOperation < ApplicationOperation
-  wrap_in_transaction except: :undo
-end
-```
-
 ## Statuses
 
 Flows, Operations, and States all have a set of predicate methods to describe their current status.
@@ -957,7 +808,6 @@ Flows, Operations, and States all have a set of predicate methods to describe th
 | `triggered?` | `#trigger` was called.    |
 | `failed?`    | Some operation failed.    |
 | `success?`   | All operations succeeded. |
-| `reverted?`  | `#revert` was called.     |
 
 ### Operations
 
@@ -1004,13 +854,9 @@ The callbacks which are available on each class are:
 | Flow          | `:initialize` | When a new flow is being constructed.  |
 | Flow          | `:trigger`    | When `#trigger` is called on a flow.   |
 | Flow          | `:flux`       | When `#trigger` is called on a flow.   |
-| Flow          | `:revert`     | When `#revert` is called on a flow.    |
-| Flow          | `:ebb`        | When `#revert` is called on a flow.    |
 | State         | `:initialize` | When a new state is being constructed. |
 | Operation     | `:execute`    | When `#execute` is called.             |
 | Operation     | `:behavior`   | When `#execute` is called.             |
-| Operation     | `:rewind`     | When `#rewind` is called.              |
-| Operation     | `:undo`       | When `#rewind` is called.              |
 | Operation     | `:failure`    | When any type of error occurs.         |
 | Operation     | `$problem`    | When an error of type $problem occurs. |
 
@@ -1198,14 +1044,6 @@ RSpec.describe FooFlow, type: :flow do
  
     pending "describe the effects of a successful `Flow#flux` (or delete) #{__FILE__}"
   end
- 
-  describe "#revert" do
-    before { flow.trigger! }
- 
-    subject(:revert) { flow.revert }
- 
-    pending "describe the effects of a successful `Flow#ebb` (or delete) #{__FILE__}"
-  end 
 end
 ```
 
@@ -1225,11 +1063,13 @@ require "rails_helper"
 RSpec.describe MakeTheThingDoTheStuff, type: :operation do
   subject(:operation) { described_class.new(state) }
 
-  let(:state) { example_state_class.new(**state_input) }
+  let(:state) { example_state_class.new(**state_input).tap(&:validate) }
   let(:example_state_class) do
     Class.new(ApplicationState) do
       # argument :foo
       # option :bar
+      # attribute :baz 
+      # output :gaz 
     end
   end
   let(:state_input) do
@@ -1238,18 +1078,10 @@ RSpec.describe MakeTheThingDoTheStuff, type: :operation do
 
   it { is_expected.to inherit_from ApplicationOperation }
 
-  describe "#execute!" do
-    subject(:execute!) { operation.execute! }
+  describe "#execute" do
+    subject(:execute) { operation.execute }
   
     pending "describe `Operation#behavior` (or delete) #{__FILE__}"
-  end
-  
-  describe "#rewind" do
-    before { operation.execute! }
-  
-    subject(:execute!) { operation.rewind }
-  
-    pending "describe `Operation#undo` (or delete) #{__FILE__}"
   end
 end
 ```
@@ -1263,6 +1095,8 @@ let(:example_state_class) do
   Class.new(ApplicationState) do
     # argument :foo
     # option :bar
+    # attribute :baz
+    # output :gaz
   end
 end
 ```
@@ -1285,6 +1119,7 @@ let(:example_state_class) do
     argument :foo
     option :bar
     attribute :baz
+    output :gaz
   end
   
   let(:state_input) do
@@ -1294,7 +1129,31 @@ let(:example_state_class) do
   let(:foo) { ... }
   let(:bar) { ... }
 end
-``` 
+```
+
+You are encouraged to use `execute`, rather than `execute!` in testing. You can trust that if an `operation_failure` is present, the operation _would_ have raised an `Operation::Failures::OperationFailure` if you used `execute!`.
+
+Doing so will allow you to make assertions on the failure without having to expect errors:
+```ruby
+class SomeOperation < ApplicationOperation
+  failure :somethings_invalid
+
+  def behavior
+    somethings_invalid_failure! baz: "relevant data" if state.foo == "something invalid"
+  end
+end
+```
+
+```ruby
+let(:state_input) { foo: "something invalid" }
+
+before { operation.execute }
+
+it "fails with the expected data" do
+  expect(operation.operation_failure.problem).to eq :somethings_invalid
+  expect(operation.operation_failure.details.baz).to eq "relevant data"
+end
+```
 
 ### Testing States
 
@@ -1308,19 +1167,17 @@ States are generated with the following RSPec template:
 require "rails_helper"
 
 RSpec.describe FooState, type: :state do
-  subject(:state) { described_class.new(**input) }
-
-  let(:input) do
-    {}
-  end
+  subject(:state) { described_class }
 
   it { is_expected.to inherit_from ApplicationState }
-  # it { is_expected.to define_argument :foo }
-  # it { is_expected.to define_option(:foo) }
-  # it { is_expected.to define_option(:foo).with_default_value(:bar) }
-  # it { is_expected.to define_option(:foo).with_default_value_block }
+  # it { is_expected.to define_argument :required_input }
+  # it { is_expected.to define_argument :necessary_input, allow_nil: false }
+  # it { is_expected.to define_option(:optional_input) }
+  # it { is_expected.to define_option(:option_with_default, default: :default_static_value) }
+  # it { is_expected.to define_option(:option_with_default_from_block, default: default_block_value) }
   # it { is_expected.to validate_presence_of ... }
-  # it { is_expected.to define_attribute :foo }
+  # it { is_expected.to define_output :foo }
+  # it { is_expected.to define_output :foo, default: :bar }
 end
 ```
 

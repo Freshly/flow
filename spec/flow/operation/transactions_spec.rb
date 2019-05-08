@@ -4,7 +4,6 @@ RSpec.describe Flow::Operation::Transactions, type: :module do
   include_context "with an example operation", [
     Flow::TransactionWrapper,
     Flow::Operation::Execute,
-    Flow::Operation::Rewind,
     Flow::Operation::Status,
     described_class,
   ]
@@ -15,10 +14,6 @@ RSpec.describe Flow::Operation::Transactions, type: :module do
 
     context "when #execute!" do
       it_behaves_like "method is wrapped in a transaction", :execute!, :behavior
-    end
-
-    context "when #rewind" do
-      it_behaves_like "method is wrapped in a transaction", :rewind, :behavior
     end
   end
 end

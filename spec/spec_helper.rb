@@ -18,8 +18,6 @@ require_relative "support/shared_examples/a_class_with_attributes_having_default
 require_relative "support/shared_examples/a_class_which_defines_into_a_class_collection"
 require_relative "support/shared_examples/a_transaction_wrapper"
 require_relative "support/shared_examples/method_is_wrapped_in_a_transaction"
-require_relative "support/shared_examples/methods_are_wrapped_in_a_transaction"
-require_relative "support/shared_examples/methods_are_wrapped_in_a_transaction_with_a_variety_of_input"
 require_relative "support/shared_examples/operation_double_runs_are_prevented"
 
 SimpleCov.start do

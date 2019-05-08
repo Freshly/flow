@@ -7,8 +7,8 @@ module Flow
       extend ActiveSupport::Concern
 
       class_methods do
-        def callbacks_for_transaction
-          %i[behavior undo].freeze
+        def callback_name
+          :behavior
         end
       end
     end

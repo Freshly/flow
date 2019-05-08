@@ -8,19 +8,14 @@ module Flow
 
       included do
         set_callback(:execute, :before) { self.was_executed = true }
-        set_callback(:rewind, :before) { self.was_rewound = true }
 
         private
 
-        attr_accessor :was_executed, :was_rewound
+        attr_accessor :was_executed
       end
 
       def executed?
         was_executed.present?
-      end
-
-      def rewound?
-        was_rewound.present?
       end
 
       def failed?

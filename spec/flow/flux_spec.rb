@@ -38,7 +38,6 @@ RSpec.describe Flow::Flux, type: :module do
 
     before do
       allow(example_flow).to receive(:error).and_call_original
-      allow(example_flow).to receive(:revert)
     end
 
     context "when successful" do
@@ -58,9 +57,8 @@ RSpec.describe Flow::Flux, type: :module do
       context "when Flow::Flux::Failure" do
         let(:example_error) { Flow::Flux::Failure }
 
-        it "calls revert and logs the exception without raising" do
+        it "calls logs the exception without raising" do
           flux
-          expect(example_flow).to have_received(:revert)
           expect(example_flow).
             to have_received(:error).
             with(:error_executing_operation, state: expected_state, exception: expected_exception)
@@ -70,9 +68,8 @@ RSpec.describe Flow::Flux, type: :module do
       context "when a descendant StandardError" do
         let(:example_error) { Class.new(StandardError) }
 
-        it "calls revert and logs the exception and raises" do
+        it "calls logs the exception and raises" do
           expect { flux }.to raise_error example_error
-          expect(example_flow).to have_received(:revert)
           expect(example_flow).
             to have_received(:error).
             with(:error_executing_operation, state: expected_state, exception: expected_exception)
@@ -84,11 +81,6 @@ RSpec.describe Flow::Flux, type: :module do
       let(:expected_exception) { instance_of(Flow::Flux::Failure) }
 
       before { allow(example_flow).to receive(:flux!).and_raise Flow::Flux::Failure }
-
-      it "calls revert" do
-        flux
-        expect(example_flow).to have_received(:revert)
-      end
 
       it "logs the exception" do
         flux

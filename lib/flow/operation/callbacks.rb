@@ -8,7 +8,7 @@ module Flow
 
       included do
         include ActiveSupport::Callbacks
-        define_callbacks :failure, :execute, :behavior, :rewind, :undo
+        define_callbacks :failure, :execute, :behavior
       end
 
       class_methods do

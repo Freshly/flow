@@ -6,8 +6,6 @@ RSpec.shared_examples_for "method is wrapped in a transaction" do |trigger_metho
   let!(:original_transaction_count) { transaction_provider.connection.open_transactions }
 
   context "when not wrapped" do
-    before { example_class.__send__(:wrap_in_transaction, except: callback) }
-
     it "has no effect" do
       allow(example_instance).to receive(method) do
         expect(transaction_provider.connection.open_transactions).to eq original_transaction_count
@@ -18,7 +16,7 @@ RSpec.shared_examples_for "method is wrapped in a transaction" do |trigger_metho
   end
 
   context "when wrapped" do
-    before { example_class.__send__(:wrap_in_transaction, only: callback) }
+    before { example_class.__send__(:wrap_in_transaction) }
 
     it "has changes the transactions" do
       allow(example_instance).to receive(method) do

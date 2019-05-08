@@ -14,21 +14,21 @@
 #       let(:input) { {} }
 #
 #       it { is_expected.to define_output :foo }
-#       it { is_expected.to define_output :bar, :baz }
-#       it { is_expected.to define_output :gaz, :haz }
+#       it { is_expected.to define_output :bar, default: :baz }
+#       it { is_expected.to define_output :gaz, default: :haz }
 #     end
 
-RSpec::Matchers.define :define_output do |output, default_value = nil|
+RSpec::Matchers.define :define_output do |output, default: nil|
   match do |state|
-    expect(state._defaults[output].value).to eq default_value unless default_value.nil?
+    expect(state._defaults[output]&.value).to eq default
     expect(state._outputs).to include output
   end
-  description { "define output outputoption}" }
-  failure_message { |state| "expected #{state.class.name} to define output #{output} #{for_default(default_value)}" }
+  description { "define output" }
+  failure_message { "expected #{described_class} to define output #{output} #{for_default(default)}" }
 
-  def for_default(default_value)
-    return "without a default value" if default_value.nil?
+  def for_default(default)
+    return "without a default value" if default.nil?
 
-    "with default value #{default_value}"
+    "with default value #{default}"
   end
 end

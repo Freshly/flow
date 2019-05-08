@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class BottlesOnTheWallState < Flow::StateBase
-  argument :bottles_of
+  argument :bottles_of, allow_nil: false
 
   option :starting_bottles
   option :number_to_take_down, default: 1

@@ -5,5 +5,5 @@ RSpec.describe Flow::Callbacks, type: :module do
 
   it { is_expected.to include_module ActiveSupport::Callbacks }
 
-  it_behaves_like "an example class with callbacks", described_class, %i[initialize trigger flux revert ebb]
+  it_behaves_like "an example class with callbacks", described_class, %i[initialize trigger flux]
 end

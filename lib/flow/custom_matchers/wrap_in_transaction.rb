@@ -8,7 +8,7 @@
 #     end
 #
 #     class ExampleState
-#       wrap_in_transaction except: :undo
+#       wrap_in_transaction
 #     end
 #
 #     RSpec.describe ExampleFlow, type: :flow do
@@ -28,46 +28,29 @@
 #         {}
 #       end
 #
-#       it { is_expected.to wrap_in_transaction(except: :undo) }
+#       it { is_expected.to wrap_in_transaction }
 #     end
 
 # rubocop:disable Metrics/BlockLength
-RSpec::Matchers.define :wrap_in_transaction do |only: nil, except: nil|
+RSpec::Matchers.define :wrap_in_transaction do
   match do |instance|
-    all_methods = instance.class.callbacks_for_transaction
-    expected_to_be_wrapped = callbacks_to_wrap(instance, only: only, except: except)
-    expected_not_to_be_wrapped = all_methods - expected_to_be_wrapped
+    callback_name = instance.class.callback_name
     original_transaction_count = instance.class.transaction_provider.connection.open_transactions
 
-    expected_to_be_wrapped.each do |method|
-      allow(instance).to receive(method) do
-        expect(instance.class.transaction_provider.connection.open_transactions).to eq original_transaction_count + 1
-      end
+    allow(instance).to receive(callback_name) do
+      expect(instance.class.transaction_provider.connection.open_transactions).to eq original_transaction_count + 1
     end
 
-    expected_not_to_be_wrapped.each do |method|
-      allow(instance).to receive(method) do
-        expect(instance.class.transaction_provider.connection.open_transactions).to eq original_transaction_count
-      end
-    end
-
-    all_methods.each do |method|
-      instance.run_callbacks(method) { instance.public_send(method) }
-      expect(instance).to have_received(method)
-    end
+    instance.run_callbacks(callback_name) { instance.public_send(callback_name) }
+    expect(instance).to have_received(callback_name)
   end
 
-  description do |instance|
-    "wrap #{pretty_callbacks(callbacks_to_wrap(instance, only: only, except: except))} in a transaction"
+  description do
+    "wrap in a transaction"
   end
 
   failure_message do |instance|
-    pretty_callbacks_to_wrap = pretty_callbacks(callbacks_to_wrap(instance, only: only, except: except))
-    "expected #{instance.class.name} to wrap #{pretty_callbacks_to_wrap} in a transaction"
-  end
-
-  def callbacks_to_wrap(instance, only:, except:)
-    instance.class.__send__(:callbacks_to_wrap, only: only, except: except)
+    "expected #{instance.class.name} to wrap in a transaction"
   end
 
   def pretty_callbacks(callbacks)

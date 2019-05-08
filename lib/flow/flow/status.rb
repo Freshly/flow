@@ -20,9 +20,5 @@ module Flow
     def failed?
       triggered? && !success?
     end
-
-    def reverted?
-      rewound_operations.any?
-    end
   end
 end

@@ -31,7 +31,6 @@ RSpec.describe Flow, type: :integration do
     it { is_expected.to be_triggered }
     it { is_expected.to be_success }
     it { is_expected.not_to be_failed }
-    it { is_expected.not_to be_reverted }
 
     it "produces expected stanza" do
       expect(flow.outputs.stanza.join("\n")).to eq expected_stanza
@@ -47,7 +46,6 @@ RSpec.describe Flow, type: :integration do
     it { is_expected.to be_triggered }
     it { is_expected.not_to be_success }
     it { is_expected.to be_failed }
-    it { is_expected.to be_reverted }
     it { is_expected.to be_failed_operation }
 
     it "produces expected stanza" do
@@ -190,7 +188,6 @@ RSpec.describe Flow, type: :integration do
       it { is_expected.not_to be_triggered }
       it { is_expected.not_to be_success }
       it { is_expected.not_to be_failed }
-      it { is_expected.not_to be_reverted }
 
       context "with trigger!" do
         subject(:trigger!) { BottlesOnTheWallFlow.trigger!(**input) }

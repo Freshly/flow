@@ -6,8 +6,8 @@ module Flow
     extend ActiveSupport::Concern
 
     class_methods do
-      def callbacks_for_transaction
-        %i[flux ebb].freeze
+      def callback_name
+        :flux
       end
     end
   end

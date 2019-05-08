@@ -14,12 +14,4 @@ RSpec.describe ApplicationOperation, type: :operation do
 
     it "has some behavior"
   end
-
-  describe "#rewind" do
-    subject(:rewind) { operation.rewind }
-
-    before { operation.execute }
-
-    it "undoes some behavior"
-  end
 end

@@ -110,4 +110,44 @@ RSpec.describe Flow::Operation::ErrorHandler, type: :module do
       end
     end
   end
+
+  describe ".handle_errors" do
+    let(:example_error0_class) { Class.new(StandardError) }
+    let(:example_error0_name) { Faker::Internet.unique.domain_word.capitalize }
+
+    let(:example_error1_class) { Class.new(StandardError) }
+    let(:example_error1_name) { Faker::Internet.unique.domain_word.capitalize }
+
+    before do
+      stub_const(example_error0_name, example_error0_class)
+      stub_const(example_error1_name, example_error1_class)
+      allow(example_operation_class).to receive(:handle_error).and_call_original
+    end
+
+    shared_examples_for "handle_error is called for all arguments" do
+      it "calls #handle_error for each" do
+        handle_errors
+        expect(example_operation_class).to have_received(:handle_error).with(example_error0_class)
+        expect(example_operation_class).to have_received(:handle_error).with(example_error1_class)
+        expect(example_operation).to respond_to("#{example_error0_name.downcase}_failure!".to_sym)
+        expect(example_operation).to respond_to("#{example_error1_name.downcase}_failure!".to_sym)
+      end
+    end
+
+    context "with argument input" do
+      subject(:handle_errors) do
+        example_operation_class.__send__(:handle_errors, example_error0_class, example_error1_class)
+      end
+
+      it_behaves_like "handle_error is called for all arguments"
+    end
+
+    context "with array input" do
+      subject(:handle_errors) do
+        example_operation_class.__send__(:handle_errors, [ example_error0_class, example_error1_class ])
+      end
+
+      it_behaves_like "handle_error is called for all arguments"
+    end
+  end
 end

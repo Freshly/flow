@@ -10,6 +10,8 @@ RSpec.describe <%= class_name %>, type: :operation do
     Class.new(ApplicationState) do
       # argument :foo
       # option :bar
+      # attribute :baz
+      # output :gaz
     end
   end
   let(:state_input) do
@@ -18,8 +20,8 @@ RSpec.describe <%= class_name %>, type: :operation do
 
   it { is_expected.to inherit_from ApplicationOperation }
 
-  describe "#execute!" do
-    subject(:execute!) { operation.execute! }
+  describe "#execute" do
+    subject(:execute) { operation.execute }
 
     pending "describe `Operation#behavior` (or delete) #{__FILE__}"
   end

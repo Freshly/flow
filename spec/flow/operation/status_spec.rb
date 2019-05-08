@@ -19,10 +19,6 @@ RSpec.describe Flow::Operation::Status, type: :module do
     it_behaves_like "a callback tracking predicate", :execute, :executed?
   end
 
-  describe "#rewound?" do
-    it_behaves_like "a callback tracking predicate", :rewind, :rewound?
-  end
-
   describe "#failed?" do
     subject(:failed?) { example_operation.failed? }
 

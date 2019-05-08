@@ -17,5 +17,5 @@
 RSpec::Matchers.define :define_attribute do |attribute|
   match { |state| expect(state._attributes).to include attribute }
   description { "define attribute #{attribute}" }
-  failure_message { |state| "expected #{state.class.name} to defines attribute #{attribute}" }
+  failure_message { "expected #{described_class} to defines attribute #{attribute}" }
 end
