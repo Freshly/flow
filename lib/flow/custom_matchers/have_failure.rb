@@ -24,6 +24,10 @@
 #   - `with_details` AND `on_operation` are OPTIONAL
 
 module CustomMatchers
+  def have_failure(problem)
+    HaveFailure.new(problem)
+  end
+  
   class HaveFailure
     def initialize(expected_problem)
       @expected_problem = expected_problem
