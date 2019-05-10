@@ -1015,6 +1015,7 @@ This will allow you to use the following custom matchers:
  * [handle_error](lib/flow/custom_matchers/handle_error.rb) tests usage of `ApplicationOperation.handle_error`
  * [use_operations](lib/flow/custom_matchers/use_operations.rb) tests usage of `ApplicationFlow.operations`
  * [wrap_in_transaction](lib/flow/custom_matchers/wrap_in_transaction.rb) tests usage of `.wrap_in_transaction` for `ApplicationFlow` or `ApplicationOperation`
+ * [have_on_state](lib/flow/custom_matchers/have_on_state.rb) tests for data on State after a `ApplicationFlow` or `ApplicationOperation` has been run
 
 ### Testing Flows
 
