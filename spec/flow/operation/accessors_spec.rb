@@ -5,7 +5,6 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
   let(:operation_class) { example_operation_class }
   let(:state_attribute) { Faker::Lorem.word.to_sym }
-  let(:state_attribute_writer) { "#{state_attribute}=".to_sym }
   let(:state_attribute_value) { Faker::Hipster.word }
 
   before do
@@ -74,80 +73,11 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
     it { is_expected.to delegate_method(state_attribute).to(:state) }
 
     it_behaves_like "it has exactly one tracker variable of type", :reader
-    it_behaves_like "it has no tracker variables of type", :accessor
 
     context "when a reader has already been defined" do
       before { operation_class.__send__(:state_reader, state_attribute) }
 
       it_behaves_like "it has exactly one tracker variable of type", :reader
-      it_behaves_like "it has no tracker variables of type", :accessor
-    end
-
-    context "when a writer has already been defined" do
-      before { operation_class.__send__(:state_writer, state_attribute) }
-
-      it_behaves_like "it has exactly one tracker variable of type", :reader
-      it_behaves_like "it has exactly one tracker variable of type", :accessor
-    end
-  end
-
-  describe ".state_writer" do
-    subject(:operation) do
-      operation_class.__send__(:state_writer, state_attribute)
-      operation_class.new(state)
-    end
-
-    it_behaves_like "it inherits correctly", :state_writer, :writer
-
-    it { is_expected.to delegate_method(state_attribute_writer).to(:state).with_arguments(state_attribute_value) }
-
-    it_behaves_like "it has exactly one tracker variable of type", :writer
-    it_behaves_like "it has no tracker variables of type", :accessor
-
-    context "when a writer has already been defined" do
-      before { operation_class.__send__(:state_writer, state_attribute) }
-
-      it_behaves_like "it has exactly one tracker variable of type", :writer
-      it_behaves_like "it has no tracker variables of type", :accessor
-    end
-
-    context "when a writer has already been defined" do
-      before { operation_class.__send__(:state_reader, state_attribute) }
-
-      it_behaves_like "it has exactly one tracker variable of type", :writer
-      it_behaves_like "it has exactly one tracker variable of type", :accessor
-    end
-  end
-
-  describe ".state_accessor" do
-    subject(:operation) do
-      operation_class.__send__(:state_accessor, state_attribute)
-      operation_class.new(state)
-    end
-
-    it_behaves_like "it inherits correctly", :state_accessor, %i[reader writer accessor]
-
-    it { is_expected.to delegate_method(state_attribute).to(:state) }
-    it { is_expected.to delegate_method(state_attribute_writer).to(:state).with_arguments(state_attribute_value) }
-
-    it_behaves_like "it has exactly one tracker variable of type", :writer
-    it_behaves_like "it has exactly one tracker variable of type", :reader
-    it_behaves_like "it has exactly one tracker variable of type", :accessor
-
-    context "when a writer has already been defined" do
-      before { operation_class.__send__(:state_writer, state_attribute) }
-
-      it_behaves_like "it has exactly one tracker variable of type", :writer
-      it_behaves_like "it has exactly one tracker variable of type", :reader
-      it_behaves_like "it has exactly one tracker variable of type", :accessor
-    end
-
-    context "when a writer has already been defined" do
-      before { operation_class.__send__(:state_reader, state_attribute) }
-
-      it_behaves_like "it has exactly one tracker variable of type", :writer
-      it_behaves_like "it has exactly one tracker variable of type", :reader
-      it_behaves_like "it has exactly one tracker variable of type", :accessor
     end
   end
 end
