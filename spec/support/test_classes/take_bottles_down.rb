@@ -3,6 +3,8 @@
 class TakeBottlesDown < Flow::OperationBase
   wrap_in_transaction
 
+  allow_direct_state_access
+
   class NonTakedownError < StandardError; end
 
   failure :too_greedy

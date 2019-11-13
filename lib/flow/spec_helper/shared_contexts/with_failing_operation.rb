@@ -26,6 +26,7 @@ RSpec.shared_context "with failing operation" do
   let(:failure_problem) { Faker::Lorem.words.join("-").parameterize.underscore }
   let(:failing_operation) do
     Class.new(Flow::OperationBase).tap do |klass|
+      klass.__send__(:allow_direct_state_access)
       klass.instance_exec(self) do |spec_context|
         failure spec_context.failure_problem
 

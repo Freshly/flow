@@ -10,8 +10,11 @@ RSpec.shared_context "with an example operation" do |extra_operation_modules = n
   let(:example_operation_class) do
     root_operation_class.tap do |operation_class|
       operation_modules.each { |operation_module| operation_class.include operation_module }
+      operation_class.__send__(:allow_direct_state_access) if direct_state_access?
     end
   end
+
+  let(:direct_state_access?) { true }
 
   let(:state) { Class.new(Flow::StateBase) }
 end

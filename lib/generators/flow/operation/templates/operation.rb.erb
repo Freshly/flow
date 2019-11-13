@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class <%= class_name %> < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     # Define what this operation does here
   end

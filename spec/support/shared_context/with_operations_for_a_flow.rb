@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_context "with operations for a flow" do
+  # These intentionally do not use allow_direct_state_access to ensure the deprecation is tested
   let(:operation0_class) { Class.new(Flow::OperationBase) }
   let(:operation1_class) { Class.new(Flow::OperationBase) }
   let(:operation2_class) { Class.new(Flow::OperationBase) }

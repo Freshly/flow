@@ -3,6 +3,8 @@
 class PassBottlesAround < Flow::OperationBase
   wrap_in_transaction
 
+  allow_direct_state_access
+
   class NonTakedownError < StandardError; end
 
   BORING_DRINKS = %w[juice water soda pop]

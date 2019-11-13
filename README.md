@@ -11,6 +11,7 @@
 * [How it Works](#how-it-works)
    * [Flows](#flows)
    * [Operations](#operations)
+      * [Deprecation Warning](#-deprecation-warning-)
    * [States](#states)
       * [Input](#input)
       * [Output](#output)
@@ -140,6 +141,8 @@ CalculateTimetablesFlow.trigger(state_instance)
 ```
 
 ### Operations
+  
+This will prepare your operations for the upgrade pathway that discontinues direct state access.
 
 An **Operation** is a service object which is executed with a **State**.
 
@@ -147,6 +150,8 @@ Operations should **not** be named with the `Operation` suffix; name them what t
 
 ```ruby
 class ClearExistingTimetables < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.existing_timetable_cells.update_all(total_minutes: 0)
   end
@@ -155,6 +160,8 @@ end
 
 ```ruby
 class CalculateTimetables < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.minutes_by_project_employee.each do |project_employee, total_minutes|
       project_id, employee_id = project_employee
@@ -169,6 +176,8 @@ end
 
 ```ruby
 class SummarizeTimetables < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.timetables.each do |timetable| 
       timetable.update!(total_minutes: timetable.cells.sum(:total_minutes))
@@ -179,6 +188,8 @@ end
 
 ```ruby
 class DestroyEmptyTimetableCells < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.empty_cells.destroy_all
   end
@@ -200,6 +211,18 @@ operation = ExampleOperation.new(OpenStruct.new(first_name: "Eric"))
 operation.execute 
 # Hello, Eric
 operation.executed? # => true 
+```
+
+#### 🚨 **Deprecation Warning** 🚨
+
+Since its inception, flow operations had implicit direct state access. Once the State Accessors were introduced, it opened up a new more explicit way to map the relation of Operations and States. To enforce this improved coding behavior, direct state access for Operations is being removed.
+
+For the time being, all Operations should call the class method `.allow_direct_state_access`
+
+```ruby
+class ExampleOperation < ApplicationOperation
+  allow_direct_state_access
+end
 ```
 
 ### States
@@ -368,12 +391,16 @@ class ExampleState < ApplicationState
 end
 
 class AskAQuestion < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.story << "Bah Bah, Black Sheep. Have you any wool?"
   end
 end
 
 class GiveAnAnswer < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.story << "Yes sir, yes sir! Three bags full!"
   end
@@ -400,6 +427,8 @@ class BadState < ApplicationState
 end
 
 class BadOperation < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.foo = Bar.where(foo: foo)
   end
@@ -421,6 +450,8 @@ class GoodState < ApplicationState
 end
 
 class GoodOperation < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     state.gaz = Gaz.create!(name: foo.name, count: bar.count)
   end
@@ -596,6 +627,8 @@ class ExampleState < ApplicationState
 end
 
 class ExampleOperation < ApplicationOperation
+  allow_direct_state_access
+
   handle_error RuntimeError
   
   def behavior
@@ -622,6 +655,8 @@ If no problem is specified explicitly, a demodulized underscored version of the 
 
 ```ruby
 class ExampleOperation < ApplicationOperation
+  allow_direct_state_access
+
   handle_error RuntimeError, problem: :something_bad_happened
   handle_error ActiveRecord::RecordInvalid
   
@@ -678,6 +713,8 @@ Failures are part of the class definition of your Operation.
 
 ```ruby
 class PassBottlesAround < ApplicationOperation
+  allow_direct_state_access
+
   failure :too_generous
 
   def behavior
@@ -694,6 +731,8 @@ An unstructured hash of data can be provided to the `_failure!` method and will 
 
 ```ruby
 class PassBottlesAround < ApplicationOperation
+  allow_direct_state_access
+
   failure :too_generous
 
   def behavior
@@ -719,6 +758,8 @@ You can also specify `if:` / `unless:` options to proactively trigger failures a
 
  ```ruby
 class PassBottlesAround < ApplicationOperation
+  allow_direct_state_access
+
   failure :too_dangerous, if: -> { state.bottle_of == "tequila" }
   failure :not_dangerous_enough, unless: :drink_dangerous?
   
@@ -738,6 +779,8 @@ This works for explictly defined failures:
 
 ```ruby
 class OperationOne < ApplicationOperation
+  allow_direct_state_access
+
   failure :too_greedy
   
   on_too_greedy_failure do
@@ -750,6 +793,8 @@ As well as manually handled errors (using the demodulized underscored name of th
 
 ```ruby
 class OperationTwo < ApplicationOperation
+  allow_direct_state_access
+
   handle_error ActiveRecord::RecordInvalid
   
   on_record_invalid_failure do
@@ -762,6 +807,8 @@ You can also listen for any problems using the generic failure event:
 
 ```ruby
 class OperationThree < ApplicationOperation
+  allow_direct_state_access
+
   handle_error RuntimeError
   
   on_failure do
@@ -796,6 +843,8 @@ Operations which modify several persisted objects together should use a transact
 
 ```ruby
 class OperationTwo < ApplicationFlow
+  allow_direct_state_access
+
   wrap_in_transaction
  
   def behavior
@@ -841,6 +890,8 @@ Flows, Operations, and States all make use of [ActiveSupport::Callbacks](https:/
 
 ```ruby
 class TakeBottlesDown < ApplicationOperation
+  allow_direct_state_access
+
   set_callback(:execute, :before) { bottle_count_term }
   set_callback(:execute, :after) { state.output.push("You take #{bottle_count_term} down.") }
   
@@ -876,6 +927,8 @@ To leverage it, just add `memoize :method_name` to your Flows, Operations, or St
 
 ```ruby
 class TakeBottlesDown < ApplicationOperation
+  allow_direct_state_access
+
   def bottle_count_term
     return "it" if state.bottles.number_on_the_wall == 1
     return "one" if state.taking_down_one?
@@ -904,6 +957,8 @@ The gems adds methods to Flows, Operations, and States which share names with lo
 
 ```ruby
 class ExampleOperation < ApplicationOperation
+  allow_direct_state_access
+
   def behavior
     warn(:nothing_to_do, { empty_object: obj }) and return if obj.empty? 
     
