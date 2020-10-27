@@ -45,6 +45,7 @@ module Flow
       def matches?(object)
         @state_expectations.all? do |key, value|
           expect(object.state.public_send(key)).to match value
+          # expect(object.state.public_send(key, :from_have_on_state)).to match value
         end
       end
 
