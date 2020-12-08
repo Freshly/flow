@@ -7,7 +7,11 @@ module Flow
       extend ActiveSupport::Concern
 
       included do
-        set_callback(:execute, :before) { self.was_executed = true }
+        set_callback :execute, :around, ->(_arg, block) do
+          block.call
+        ensure
+          self.was_executed = true
+        end
 
         private
 

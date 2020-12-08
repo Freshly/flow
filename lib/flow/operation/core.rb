@@ -22,7 +22,7 @@ module Flow
       end
 
       def initialize(state)
-        @state = state_proxy_class.new(state)
+        @state = state_proxy_class.new(state, self)
       end
     end
   end
