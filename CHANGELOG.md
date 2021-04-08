@@ -6,6 +6,10 @@
 
 - Updated rubocop, faker and other development dependencies
 
+### Fixes
+
+- Don't call deprecated reader methods from `have_on_state` matcher ([#189](https://github.com/Freshly/flow/pull/189))
+
 ## 0.10.6
 
 *Release Date*: 2020/1/9
