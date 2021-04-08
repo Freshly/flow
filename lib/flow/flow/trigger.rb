@@ -7,12 +7,12 @@ module Flow
       extend ActiveSupport::Concern
 
       class_methods do
-        def trigger!(*arguments)
-          new(*arguments).trigger!
+        def trigger!(*arguments, **options)
+          new(*arguments, **options).trigger!
         end
 
-        def trigger(*arguments)
-          new(*arguments).trigger
+        def trigger(*arguments, **options)
+          new(*arguments, **options).trigger
         end
       end
 
