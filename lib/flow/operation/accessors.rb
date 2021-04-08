@@ -11,27 +11,33 @@ module Flow
         class_attribute :_state_accessors, instance_writer: false, default: []
       end
 
-      class_methods do
+      module ClassMethods
         protected
 
-        def state_reader(name)
-          return unless _add_state_reader_tracker(name.to_sym)
-
-          delegate name, to: :state
+        def state_reader(name, prefix: false)
+          define_method(prefixed_name(name, prefix: prefix)) { state.public_send(name) }
+          _add_state_reader_tracker(name.to_sym)
         end
 
-        def state_writer(name)
-          return unless _add_state_writer_tracker(name.to_sym)
-
-          delegate("#{name}=", to: :state)
+        def state_writer(name, prefix: false)
+          define_method("#{prefixed_name(name, prefix: prefix)}=".to_sym) { |*args| state.public_send("#{name}=", *args) }
+          _add_state_writer_tracker(name.to_sym)
         end
 
-        def state_accessor(name)
-          state_reader name
-          state_writer name
+        def state_accessor(name, prefix: false)
+          state_reader name, prefix: prefix
+          state_writer name, prefix: prefix
         end
 
         private
+
+        def prefixed_name(name, prefix: false)
+          return name unless prefix
+
+          prefix = "state" if prefix == true
+
+          "#{prefix}_#{name}"
+        end
 
         def _add_state_reader_tracker(name)
           return false if _state_readers.include?(name)
