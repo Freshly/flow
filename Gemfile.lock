@@ -89,7 +89,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
-    rspice (0.25.6)
+    rspice (0.25.7)
       faker (>= 1.8, < 3.0)
       rspec (~> 3.0)
     rubocop (0.92.0)
@@ -160,7 +160,7 @@ DEPENDENCIES
   flow!
   pry-byebug (>= 3.7.0)
   rake (~> 13.0)
-  rspice (>= 0.21.0, < 1.0)
+  rspice (>= 0.25.7, < 1.0)
   shoulda-matchers (= 4.0.1)
   simplecov (~> 0.16)
   spicerack-styleguide (>= 0.21.0, < 1.0)

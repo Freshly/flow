@@ -33,6 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bcrypt", "~> 3.1.13"
   spec.add_development_dependency "shoulda-matchers", "4.0.1"
 
-  spec.add_development_dependency "rspice", ">= 0.21.0", "< 1.0"
+  spec.add_development_dependency "rspice", ">= 0.25.7", "< 1.0"
   spec.add_development_dependency "spicerack-styleguide", ">= 0.21.0", "< 1.0"
 end
