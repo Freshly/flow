@@ -9,6 +9,7 @@
 ### Fixes
 
 - Don't call deprecated reader methods from `have_on_state` matcher ([#189](https://github.com/Freshly/flow/pull/189))
+- Ruby 2.7 fixes ([#190](https://github.com/Freshly/flow/pull/190))
 
 ## 0.10.6
 
