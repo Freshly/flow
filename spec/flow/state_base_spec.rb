@@ -3,11 +3,8 @@
 RSpec.describe Flow::StateBase, type: :state do
   subject { described_class }
 
-  it { is_expected.to inherit_from Spicerack::InputModel }
+  it { is_expected.to inherit_from Spicerack::OutputObject }
 
   it { is_expected.to include_module Conjunction::Junction }
   it { is_expected.to have_conjunction_suffix "State" }
-
-  it { is_expected.to include_module Flow::State::Status }
-  it { is_expected.to include_module Flow::State::Output }
 end
