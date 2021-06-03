@@ -9,6 +9,9 @@ jobs:
       matrix:
         ruby: [ "2.5.x", "2.6.x", "2.7.x" ]
         rails: [ "5.2.0", "6.0.0" ]
+        spicerack:
+          - "0.25.0"
+          - "0.26.0"
 
     steps:
     - uses: actions/checkout@v1
@@ -21,13 +24,14 @@ jobs:
         echo "gem 'activemodel', '~> ${{ matrix.rails }}'" >> Gemfile
         echo "gem 'activerecord', '~> ${{ matrix.rails }}'" >> Gemfile
         echo "gem 'activesupport', '~> ${{ matrix.rails }}'" >> Gemfile
+        echo "gem 'spicerack', '~> ${{ matrix.spicerack }}'" >> Gemfile
     - name: Set up dependencies
       run: |
         sudo apt-get update
         sudo apt-get install libsqlite3-dev
         sudo apt-get install redis-server
         gem install bundler
-        bundle update activemodel activerecord activesupport
+        bundle update activemodel activerecord activesupport spicery
         bundle install --jobs 4 --retry 3
     - name: Run RSpec
       run: |
