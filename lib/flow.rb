@@ -4,6 +4,7 @@ require "active_model"
 require "active_support"
 
 require "spicerack"
+require "conjunction"
 require "malfunction"
 
 require_relative "flow/version"

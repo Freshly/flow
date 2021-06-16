@@ -4,6 +4,7 @@ PATH
     flow (0.10.9)
       activemodel (>= 5.2.1)
       activesupport (>= 5.2.1)
+      conjunction (>= 0.2.0, < 1.0)
       malfunction (>= 0.2.0, < 1.0)
       short_circu_it (>= 0.2.0, < 1.0)
       spicerack (>= 0.2.0, < 1.0)

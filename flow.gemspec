@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   # spec.add_runtime_dependency "substance", ">= 0.2.0", "< 1.0"
   spec.add_runtime_dependency "spicerack", ">= 0.2.0", "< 1.0"
 
+  spec.add_runtime_dependency "conjunction", ">= 0.2.0", "< 1.0"
   spec.add_runtime_dependency "short_circu_it", ">= 0.2.0", "< 1.0"
   spec.add_runtime_dependency "technologic", ">= 0.2.0", "< 1.0"
   spec.add_runtime_dependency "malfunction", ">= 0.2.0", "< 1.0"
