@@ -9,6 +9,8 @@ end
 require "spicery/spec_helper"
 require "shoulda-matchers"
 
+require "active_record"
+
 require_relative "../lib/flow/spec_helper"
 
 require "flow"

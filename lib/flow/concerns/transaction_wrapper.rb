@@ -7,6 +7,8 @@ module Flow
 
     class_methods do
       def transaction_provider
+        raise TransactionProviderNotDefined, "must explicitly define a transaction provider if ActiveRecord is not available" unless defined?(ActiveRecord)
+
         ActiveRecord::Base
       end
 

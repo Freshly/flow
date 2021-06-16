@@ -3,7 +3,6 @@ PATH
   specs:
     flow (0.10.8)
       activemodel (>= 5.2.1)
-      activerecord (>= 5.2.1)
       activesupport (>= 5.2.1)
       malfunction (>= 0.2.0, < 1.0)
       short_circu_it (>= 0.2.0, < 1.0)
@@ -165,6 +164,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (>= 5.2.1)
   bcrypt (~> 3.1.13)
   bundler (>= 2.0.1)
   flow!
