@@ -8,6 +8,7 @@ require_relative "operation/execute"
 require_relative "operation/failures"
 require_relative "operation/status"
 require_relative "operation/transactions"
+require_relative "operation/stand_alone"
 
 # An **Operation** is a service object which is executed with a **State**.
 module Flow
@@ -21,5 +22,6 @@ module Flow
     include Operation::Failures
     include Operation::Status
     include Operation::Transactions
+    include Operation::StandAlone
   end
 end
