@@ -7,6 +7,7 @@
 *Release Date*: 2021/6/16
 
 - Remove explicit ActiveRecord dependency ([#200](https://github.com/Freshly/flow/pull/200))
+- Add explicit dependency on `conjunction` (already a dependency of `malfunction`) ([#202](https://github.com/Freshly/flow/pull/202))
 
 ## 0.10.8
 
