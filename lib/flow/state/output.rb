@@ -38,7 +38,9 @@ module Flow
 
         def ensure_validation_before(method)
           around_method method do |*arguments|
-            raise NotValidatedError unless validated?
+            method_name = method.to_s.delete("=").to_sym
+
+            raise NotValidatedError unless validated? || _options.include?(method_name) || _arguments.include?(method_name)
 
             super(*arguments)
           end

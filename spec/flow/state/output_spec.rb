@@ -103,20 +103,52 @@ RSpec.describe Flow::State::Output, type: :module do
     context "with outputs" do
       include_context "with example state having output"
 
-      context "without running validations" do
-        it "raises" do
-          expect { example_state.outputs }.to raise_error Flow::NotValidatedError
+      context "when not validated" do
+        context "when outputs are NOT arguments or options" do
+          it "raises" do
+            expect { example_state.outputs }.to raise_error Flow::NotValidatedError
+          end
+        end
+
+        context "when outputs are also arguments" do
+          let(:example_state) { example_class.new(state_inputs) }
+          let(:state_inputs) do
+            { test_output0: nil, test_output1: :input_value1, test_output2: :input_value2 }
+          end
+          let(:expected_outputs) { state_inputs }
+
+          before do
+            example_class.__send__(:argument, :test_output0)
+            example_class.__send__(:argument, :test_output1)
+            example_class.__send__(:argument, :test_output2)
+          end
+
+          it { is_expected.to have_attributes(**expected_outputs) }
+        end
+
+        context "when outputs are also options" do
+          let(:expected_outputs) do
+            { test_output0: :option_default_value0, test_output1: :option_default_value1, test_output2: nil }
+          end
+
+          before do
+            example_class.__send__(:option, :test_output0, default: :option_default_value0)
+            example_class.__send__(:option, :test_output1, default: :option_default_value1)
+            example_class.__send__(:option, :test_output2)
+          end
+
+          it { is_expected.to have_attributes(**expected_outputs) }
         end
       end
 
-      context "when valid" do
-        let(:expected_hash) do
+      context "when validated" do
+        let(:expected_outputs) do
           { test_output0: nil, test_output1: :default_value1, test_output2: :default_value2 }
         end
 
-        before { example_state.valid? }
+        before { example_state.validate }
 
-        it { is_expected.to have_attributes(**expected_hash) }
+        it { is_expected.to have_attributes(**expected_outputs) }
       end
     end
   end
