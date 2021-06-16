@@ -2,6 +2,8 @@
 
 ## Upcoming
 
+- Remove explicit ActiveRecord dependency ([#200](https://github.com/Freshly/flow/pull/200))
+
 ## 0.10.8
 
 *Release Date*: 2021/6/3
