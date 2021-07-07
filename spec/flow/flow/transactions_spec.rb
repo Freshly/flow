@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Flow::Transactions, type: :module do
-  include_context "with example flow having state", [
-    Flow::TransactionWrapper,
-    Flow::Flow::Operations,
-    Flow::Flow::Flux,
-    described_class,
-  ]
+RSpec.describe Flow::Flow::Transactions, type: :concern do
+  include_context "with example flow having state"
 
   it_behaves_like "a transaction wrapper" do
     let(:example_class) { example_flow_class }

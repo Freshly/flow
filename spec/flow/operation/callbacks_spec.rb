@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::Callbacks, type: :module do
+RSpec.describe Flow::Operation::Callbacks, type: :concern do
   subject(:example_class) { Class.new.include described_class }
 
   it { is_expected.to include_module ActiveSupport::Callbacks }

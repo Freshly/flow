@@ -5,6 +5,7 @@ module Flow
 
   class FlowError < Error; end
   class StateInvalidError < FlowError; end
+  class FluxError < FlowError; end
 
   class OperationError < Error; end
   class AlreadyExecutedError < OperationError; end

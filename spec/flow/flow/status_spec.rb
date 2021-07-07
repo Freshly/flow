@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Flow::Status, type: :module do
-  include_context "with example flow having state", [ Flow::Flow::Operations, Flow::Flow::Flux, described_class ]
+RSpec.describe Flow::Flow::Status, type: :concern do
+  include_context "with example flow having state"
 
   shared_examples_for "a flow status driven by array presence" do |status_method, array_method, true_if_empty = false|
     subject { example_flow.public_send(status_method) }
@@ -78,6 +78,22 @@ RSpec.describe Flow::Flow::Status, type: :module do
       end
 
       it { is_expected.to be false }
+    end
+  end
+
+  describe "#malfunction?" do
+    subject { example_flow }
+
+    context "with malfunction" do
+      let(:malfunction) { instance_double(Flow::Malfunction::Base) }
+
+      before { allow(example_flow).to receive(:malfunction).and_return(malfunction) }
+
+      it { is_expected.to be_malfunction }
+    end
+
+    context "without malfunction" do
+      it { is_expected.not_to be_malfunction }
     end
   end
 end

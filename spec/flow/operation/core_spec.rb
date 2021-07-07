@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::Core, type: :module do
+RSpec.describe Flow::Operation::Core, type: :concern do
   include_context "with an example operation"
 
   it { is_expected.to delegate_method(:state_proxy_class).to(:class) }

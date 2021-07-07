@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::Transactions, type: :module do
+RSpec.describe Flow::Operation::Transactions, type: :concern do
   include_context "with an example operation"
 
   it_behaves_like "a transaction wrapper" do

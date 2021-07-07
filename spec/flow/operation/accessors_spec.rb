@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::Accessors, type: :module do
+RSpec.describe Flow::Operation::Accessors, type: :concern do
   include_context "with an example operation"
 
   let(:operation_class) { example_operation_class }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::ErrorHandler, type: :module do
+RSpec.describe Flow::Operation::ErrorHandler, type: :concern do
   include_context "with an example operation"
 
   describe ".handle_error" do

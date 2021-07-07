@@ -33,6 +33,7 @@ module Flow
       def trigger
         trigger!
       rescue StateInvalidError
+        build_malfunction ::Flow::Malfunction::InvalidState, state
         self
       end
     end

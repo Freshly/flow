@@ -2,6 +2,7 @@
 
 require_relative "flow/callbacks"
 require_relative "flow/core"
+require_relative "flow/malfunction"
 require_relative "flow/flux"
 require_relative "flow/operations"
 require_relative "flow/status"
@@ -17,6 +18,7 @@ module Flow
     include TransactionWrapper
     include Flow::Callbacks
     include Flow::Core
+    include Flow::Malfunction
     include Flow::Flux
     include Flow::Operations
     include Flow::Status

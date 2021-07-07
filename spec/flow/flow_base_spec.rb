@@ -20,6 +20,7 @@ RSpec.describe Flow::FlowBase, type: :flow do
   it { is_expected.to include_module Flow::TransactionWrapper }
   it { is_expected.to include_module Flow::Flow::Callbacks }
   it { is_expected.to include_module Flow::Flow::Core }
+  it { is_expected.to include_module Flow::Flow::Malfunction }
   it { is_expected.to include_module Flow::Flow::Flux }
   it { is_expected.to include_module Flow::Flow::Operations }
   it { is_expected.to include_module Flow::Flow::Status }

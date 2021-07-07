@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::State::Output, type: :module do
+RSpec.describe Flow::State::Output, type: :concern do
   include_context "with an example state"
 
   describe ".output" do

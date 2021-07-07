@@ -21,6 +21,10 @@ module Flow
       def failed?
         triggered? && !success?
       end
+
+      def malfunction?
+        malfunction.present?
+      end
     end
   end
 end

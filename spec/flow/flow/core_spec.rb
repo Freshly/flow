@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Flow::Core, type: :module do
+RSpec.describe Flow::Flow::Core, type: :concern do
   include_context "with example flow having state"
 
   it { is_expected.to include_module Conjunction::Junction }

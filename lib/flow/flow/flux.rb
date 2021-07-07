@@ -20,7 +20,8 @@ module Flow
         def _flux
           executable_operations.each do |operation|
             operation.execute
-            (@failed_operation = operation) and raise Flow::Flux::Failure if operation.failed?
+            (@failed_operation = operation) and raise FluxError if operation.failed?
+            
             executed_operations << operation
           end
         end
@@ -44,14 +45,14 @@ module Flow
       rescue StandardError => exception
         info :error_executing_operation, state: state, exception: exception
 
-        raise exception unless exception.is_a? Flow::Flux::Failure
+        raise exception unless exception.is_a? FluxError
+        
+        build_malfunction ::Flow::Malfunction::FailedOperation, @failed_operation
       end
 
       def flux!
         run_callbacks(:flux) { _flux }
       end
-
-      class Failure < StandardError; end
     end
   end
 end

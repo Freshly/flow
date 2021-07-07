@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Flow::Operations, type: :module do
-  include_context "with example flow having state", described_class
+RSpec.describe Flow::Flow::Operations, type: :concern do
+  include_context "with example flow having state"
 
   describe ".operations" do
     subject(:operations) { example_flow_class.__send__(:operations, new_operations) }

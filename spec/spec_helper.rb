@@ -6,7 +6,10 @@ SimpleCov.start do
   add_filter "/rspec/"
 end
 
+require "malfunction/spec_helper"
+
 require "conjunction/spec_helper"
+
 require "shoulda-matchers"
 
 require "active_record"

@@ -17,6 +17,10 @@ RSpec.describe Flow do
     it { is_expected.to inherit_from Flow::FlowError }
   end
 
+  describe described_class::FluxError do
+    it { is_expected.to inherit_from Flow::FlowError }
+  end
+
   describe described_class::OperationError do
     it { is_expected.to inherit_from StandardError }
   end

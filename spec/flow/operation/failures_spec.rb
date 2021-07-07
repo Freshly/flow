@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::Failures, type: :module do
+RSpec.describe Flow::Operation::Failures, type: :concern do
   include_context "with an example operation"
 
   let(:problem) { Faker::Lorem.word.to_sym }

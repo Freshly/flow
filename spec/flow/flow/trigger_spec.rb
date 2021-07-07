@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Flow::Trigger, type: :module do
-  include_context "with example flow having state", [ Flow::Flow::Operations, Flow::Flow::Flux, described_class ]
+RSpec.describe Flow::Flow::Trigger, type: :concern do
+  include_context "with example flow having state"
 
   it { is_expected.to delegate_method(:valid?).to(:state).with_prefix(true) }
 
@@ -69,6 +69,14 @@ RSpec.describe Flow::Flow::Trigger, type: :module do
       before { allow(example_flow).to receive(:trigger!).and_raise(Flow::StateInvalidError) }
 
       it { is_expected.to eq example_flow }
+
+      it { is_expected.to be_malfunction }
+
+      it "sets malfunction" do
+        expect { trigger }.to change { example_flow.malfunction }.to(instance_of(Flow::Malfunction::InvalidState))
+
+        expect(example_flow.malfunction).to have_attributes(state: example_flow.state)
+      end
     end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Flow::Operation::Status, type: :module do
+RSpec.describe Flow::Operation::Status, type: :concern do
   include_context "with an example operation"
 
   shared_examples_for "a callback tracking predicate" do |callback, predicate|

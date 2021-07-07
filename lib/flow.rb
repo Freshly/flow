@@ -14,6 +14,8 @@ require_relative "flow/errors"
 require_relative "flow/concerns/transaction_wrapper"
 
 require_relative "flow/malfunction/base"
+require_relative "flow/malfunction/invalid_state"
+require_relative "flow/malfunction/failed_operation"
 
 # TODO: Remove inheritance nonsense, just use Substance once deprecation is removed from Spicerack
 class Flow::RootObject < (defined?(Substance::RootObject) ? Substance::RootObject : Spicerack::RootObject); end
