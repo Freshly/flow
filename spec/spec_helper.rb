@@ -6,8 +6,10 @@ SimpleCov.start do
   add_filter "/rspec/"
 end
 
-require "spicery/spec_helper"
+require "conjunction/spec_helper"
 require "shoulda-matchers"
+
+require "active_record"
 
 require_relative "../lib/flow/spec_helper"
 

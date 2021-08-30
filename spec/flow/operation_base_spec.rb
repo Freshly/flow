@@ -3,7 +3,7 @@
 RSpec.describe Flow::OperationBase, type: :operation do
   subject { described_class }
 
-  it { is_expected.to inherit_from Spicerack::RootObject }
+  it { is_expected.to inherit_from Flow::RootObject }
 
   it { is_expected.to include_module Flow::TransactionWrapper }
   it { is_expected.to include_module Flow::Operation::Accessors }

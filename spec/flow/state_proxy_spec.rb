@@ -8,7 +8,7 @@ RSpec.describe Flow::StateProxy, type: :state_proxy do
   let(:state) { example_state }
 
   describe "#state" do
-    subject { state_proxy.__send__(:state) }
+    subject { state_proxy.__send__(:_state) }
 
     it { is_expected.to eq example_state }
   end

@@ -7,20 +7,40 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ "2.5.x", "2.6.x" ]
-        rails: [ "5.2.0", "6.0.0" ]
+        # TODO: restore once 5.2 support is removed
+        # ruby:
+        #   - "2.5.x"
+        #   - "2.6.x"
+        #   - "2.7.x"
+        #   - "3.0.x"
+        # rails:
+        #   - "5.2.0"
+        #   - "6.0.0"
+        #   - "6.1.0"
+        rubies:
+          - ["2.5.x", "5.2.0"]
+          - ["2.5.x", "6.0.0"]
+          - ["2.5.x", "6.1.0"]
+          - ["2.6.x", "5.2.0"]
+          - ["2.6.x", "6.0.0"]
+          - ["2.6.x", "6.1.0"]
+          - ["2.7.x", "5.2.0"]
+          - ["2.7.x", "6.0.0"]
+          - ["2.7.x", "6.1.0"]
+          - ["3.0.x", "6.0.0"]
+          - ["3.0.x", "6.1.0"]
 
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Ruby ${{ matrix.ruby }}
+    - name: Set up Ruby ${{ matrix.rubies[0] }}
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
-    - name: Apply Rails ${{ matrix.rails }} dependencies
+        ruby-version: ${{ matrix.rubies[0] }}
+    - name: Apply Rails ${{ matrix.rubies[1] }} dependencies
       run: |
-        echo "gem 'activemodel', '~> ${{ matrix.rails }}'" >> Gemfile
-        echo "gem 'activerecord', '~> ${{ matrix.rails }}'" >> Gemfile
-        echo "gem 'activesupport', '~> ${{ matrix.rails }}'" >> Gemfile
+        echo "gem 'activemodel', '~> ${{ matrix.rubies[1] }}'" >> Gemfile
+        echo "gem 'activerecord', '~> ${{ matrix.rubies[1] }}'" >> Gemfile
+        echo "gem 'activesupport', '~> ${{ matrix.rubies[1] }}'" >> Gemfile
     - name: Set up dependencies
       run: |
         sudo apt-get update

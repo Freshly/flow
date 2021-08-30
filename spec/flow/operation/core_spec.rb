@@ -10,7 +10,7 @@ RSpec.describe Flow::Operation::Core, type: :module do
 
     it "has state proxy" do
       expect(operation.state.class < Flow::StateProxy).to eq true
-      expect(operation.state.__send__(:state)).to eq example_state
+      expect(operation.state.__send__(:_state)).to eq example_state
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe Flow::Operation::Core, type: :module do
 
       before { example_operation_class.__send__(:state_reader, :test_reader) }
 
-      it { is_expected.to delegate_method(:test_reader).to(:state) }
+      it { is_expected.to delegate_method(:test_reader).to(:_state) }
     end
 
     describe "with writer" do
@@ -43,7 +43,7 @@ RSpec.describe Flow::Operation::Core, type: :module do
 
       before { example_operation_class.__send__(:state_writer, :test_writer) }
 
-      it { is_expected.to delegate_method(:test_writer=).to(:state).with_arguments(:value) }
+      it { is_expected.to delegate_method(:test_writer=).to(:_state).with_arguments(:value) }
     end
 
     describe "with accessor" do
@@ -51,8 +51,8 @@ RSpec.describe Flow::Operation::Core, type: :module do
 
       before { example_operation_class.__send__(:state_accessor, :attribute) }
 
-      it { is_expected.to delegate_method(:attribute).to(:state).with_arguments(:value) }
-      it { is_expected.to delegate_method(:attribute=).to(:state).with_arguments(:value) }
+      it { is_expected.to delegate_method(:attribute).to(:_state).with_arguments(:value) }
+      it { is_expected.to delegate_method(:attribute=).to(:_state).with_arguments(:value) }
     end
   end
 end

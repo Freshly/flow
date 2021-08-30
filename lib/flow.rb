@@ -1,32 +1,25 @@
 # frozen_string_literal: true
 
 require "active_model"
-require "active_record"
 require "active_support"
 
-require "spicery"
+require "spicerack"
+require "conjunction"
 require "malfunction"
 
-require "flow/version"
+require_relative "flow/version"
 
-require "flow/concerns/transaction_wrapper"
+require_relative "flow/errors"
 
-require "flow/malfunction/base"
+require_relative "flow/concerns/transaction_wrapper"
 
-require "flow/flow_base"
-require "flow/operation_base"
-require "flow/state_base"
-require "flow/state_proxy"
+require_relative "flow/malfunction/base"
 
-module Flow
-  class Error < StandardError; end
+# TODO: Remove inheritance nonsense, just use Substance once deprecation is removed from Spicerack
+class Flow::RootObject < (defined?(Substance::RootObject) ? Substance::RootObject : Spicerack::RootObject); end
+class Flow::InputModel < (defined?(Substance::InputModel) ? Substance::InputModel : Spicerack::InputModel); end
 
-  class FlowError < Error; end
-  class StateInvalidError < FlowError; end
-
-  class OperationError < Error; end
-  class AlreadyExecutedError < OperationError; end
-
-  class StateError < Error; end
-  class NotValidatedError < StateError; end
-end
+require_relative "flow/flow_base"
+require_relative "flow/operation_base"
+require_relative "flow/state_base"
+require_relative "flow/state_proxy"

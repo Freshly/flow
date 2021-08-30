@@ -12,7 +12,7 @@ RSpec.describe Flow::FlowBase, type: :flow do
     stub_const("#{example_flow_name}State", example_state_class)
   end
 
-  it { is_expected.to inherit_from Spicerack::RootObject }
+  it { is_expected.to inherit_from Flow::RootObject }
 
   it { is_expected.to include_module Conjunction::Junction }
   it { is_expected.to have_conjunction_suffix "Flow" }

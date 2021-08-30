@@ -2,9 +2,43 @@
 
 ## Upcoming
 
+## 0.10.9
+
+*Release Date*: 2021/6/16
+
+- Remove explicit ActiveRecord dependency ([#200](https://github.com/Freshly/flow/pull/200))
+- Add explicit dependency on `conjunction` (already a dependency of `malfunction`) ([#202](https://github.com/Freshly/flow/pull/202))
+
+## 0.10.8
+
+*Release Date*: 2021/6/3
+
+- Use Substance objects if they're available ([#196](https://github.com/Freshly/flow/pull/196))
+
+## 0.10.7.2
+
+*Release Date*: 2021/5/11
+
+- Fix `have_on_state` matcher for real ([#192](https://github.com/Freshly/flow/pull/192))
+
+## 0.10.7.1
+
+*Release Date*: 2021/4/13
+
+- Fix `have_on_state` matcher for flow specs which don't use StateProxy ([#192](https://github.com/Freshly/flow/pull/192))
+
+## 0.10.7 [Yanked]
+
+*Release Date*: 2021/4/8
+
 ### Changes
 
 - Updated rubocop, faker and other development dependencies
+
+### Fixes
+
+- Don't call deprecated reader methods from `have_on_state` matcher ([#189](https://github.com/Freshly/flow/pull/189))
+- Ruby 2.7 fixes ([#190](https://github.com/Freshly/flow/pull/190))
 
 ## 0.10.6
 
