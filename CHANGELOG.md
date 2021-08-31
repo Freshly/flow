@@ -3,6 +3,7 @@
 ## Upcoming
 
 - Add `prefix` option to state accessor methods ([#203](https://github.com/Freshly/flow/pull/203))
+- Use Set instead of Array for accessor trackers ([#205](https://github.com/Freshly/flow/pull/205))
 
 ## 0.10.9
 
