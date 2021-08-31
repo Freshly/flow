@@ -16,21 +16,27 @@ module Flow
       module ClassMethods
         protected
 
-        def state_reader(name, prefix: false)
-          delegate name, prefix: prefix, to: :state
+        def state_reader(*names, prefix: false)
+          names.each do |name|
+            delegate name, prefix: prefix, to: :state
 
-          _add_state_reader_tracker(name.to_sym)
+            _add_state_reader_tracker(name.to_sym)
+          end
         end
 
-        def state_writer(name, prefix: false)
-          delegate "#{name}=", prefix: prefix, to: :state
+        def state_writer(*names, prefix: false)
+          names.each do |name|
+            delegate "#{name}=", prefix: prefix, to: :state
 
-          _add_state_writer_tracker(name.to_sym)
+            _add_state_writer_tracker(name.to_sym)
+          end
         end
 
-        def state_accessor(name, prefix: false)
-          state_reader name, prefix: prefix
-          state_writer name, prefix: prefix
+        def state_accessor(*names, prefix: false)
+          names.each do |name|
+            state_reader name, prefix: prefix
+            state_writer name, prefix: prefix
+          end
         end
 
         private
