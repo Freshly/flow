@@ -11,10 +11,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
   shared_context "with prefix option set" do
     let(:definition_options) { { prefix: prefix } }
-    let(:state_value) { double }
-    let(:defined_reader_name) { "#{prefix_name}_#{state_attribute}" }
-    let(:defined_writer_name) { "#{defined_reader_name}=" }
-    let(:prefix_name) { prefix == true ? :state : prefix }
+    let(:prefix_name) { (prefix == true ? :state : prefix).to_sym }
   end
 
   before { example_state_class.attr_accessor(state_attribute) }
@@ -86,8 +83,6 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
     context "when prefix is given" do
       include_context "with prefix option set"
 
-      before { allow(example_state).to receive(state_attribute).and_return(state_value) }
-
       context "when prefix is true" do
         let(:prefix) { true }
 
@@ -136,14 +131,12 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
     context "when prefix is given" do
       include_context "with prefix option set"
 
-      before { operation.public_send(defined_writer_name, state_value) }
-
       context "when prefix is true" do
         let(:prefix) { true }
 
         it_behaves_like "it has exactly one tracker variable of type", :writer
 
-        it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
+        it { is_expected.to delegate_method(state_attribute_writer).to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
       end
 
       context "when prefix is a string" do
@@ -151,7 +144,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
         it_behaves_like "it has exactly one tracker variable of type", :writer
 
-        it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
+        it { is_expected.to delegate_method(state_attribute_writer).to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
       end
     end
 
@@ -189,8 +182,6 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
       include_context "with prefix option set"
 
       describe "reader" do
-        before { allow(example_state).to receive(state_attribute).and_return(state_value) }
-
         context "when prefix is true" do
           let(:prefix) { true }
 
@@ -209,14 +200,12 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
       end
 
       describe "writer" do
-        before { operation.public_send(defined_writer_name, state_value) }
-
         context "when prefix is true" do
           let(:prefix) { true }
 
           it_behaves_like "it has exactly one tracker variable of type", :writer
 
-          it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
+          it { is_expected.to delegate_method(state_attribute_writer).to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
         end
 
         context "when prefix is a string" do
@@ -224,7 +213,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
           it_behaves_like "it has exactly one tracker variable of type", :writer
 
-          it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
+          it { is_expected.to delegate_method(state_attribute_writer).to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
         end
       end
     end
