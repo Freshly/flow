@@ -2,6 +2,8 @@
 
 ## Upcoming
 
+- Add `prefix` option to state accessor methods ([#203](https://github.com/Freshly/flow/pull/203))
+
 ## 0.10.9
 
 *Release Date*: 2021/6/16
