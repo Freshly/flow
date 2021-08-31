@@ -15,12 +15,14 @@ module Flow
         protected
 
         def state_reader(name, prefix: false)
-          define_method(prefixed_name(name, prefix: prefix)) { state.public_send(name) }
+          delegate name, prefix: prefix, to: :state
+
           _add_state_reader_tracker(name.to_sym)
         end
 
         def state_writer(name, prefix: false)
-          define_method("#{prefixed_name(name, prefix: prefix)}=".to_sym) { |*args| state.public_send("#{name}=", *args) }
+          delegate "#{name}=", prefix: prefix, to: :state
+
           _add_state_writer_tracker(name.to_sym)
         end
 
@@ -30,14 +32,6 @@ module Flow
         end
 
         private
-
-        def prefixed_name(name, prefix: false)
-          return name unless prefix
-
-          prefix = "state" if prefix == true
-
-          "#{prefix}_#{name}"
-        end
 
         def _add_state_reader_tracker(name)
           return false if _state_readers.include?(name)

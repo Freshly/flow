@@ -7,6 +7,15 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
   let(:state_attribute) { Faker::Lorem.word.to_sym }
   let(:state_attribute_writer) { "#{state_attribute}=".to_sym }
   let(:state_attribute_value) { Faker::Hipster.word }
+  let(:definition_options) { {} }
+
+  shared_context "with prefix option set" do
+    let(:definition_options) { { prefix: prefix } }
+    let(:state_value) { double }
+    let(:defined_reader_name) { "#{prefix_name}_#{state_attribute}" }
+    let(:defined_writer_name) { "#{defined_reader_name}=" }
+    let(:prefix_name) { prefix == true ? :state : prefix }
+  end
 
   before { example_state_class.attr_accessor(state_attribute) }
 
@@ -61,9 +70,21 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
     end
   end
 
+  shared_examples_for "a prefixed state reader" do
+    it "returns the state value" do
+      expect(operation.public_send(defined_reader_name)).to eq state_value
+    end
+  end
+
+  shared_examples_for "a prefixed state writer" do
+    it "sets the state value" do
+      expect(example_state.public_send(state_attribute)).to eq state_value
+    end
+  end
+
   describe ".state_reader" do
     subject(:operation) do
-      operation_class.__send__(:state_reader, state_attribute)
+      operation_class.__send__(:state_reader, state_attribute, **definition_options)
       operation_class.new(example_state)
     end
 
@@ -73,6 +94,26 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
     it_behaves_like "it has exactly one tracker variable of type", :reader
     it_behaves_like "it has no tracker variables of type", :accessor
+
+    context "when prefix is given" do
+      include_context "with prefix option set"
+
+      before { allow(example_state).to receive(state_attribute).and_return(state_value) }
+
+      context "when prefix is true" do
+        let(:prefix) { true }
+
+        it_behaves_like "it has exactly one tracker variable of type", :reader
+        it_behaves_like "a prefixed state reader"
+      end
+
+      context "when prefix is a string" do
+        let(:prefix) { Faker::Lorem.unique.word }
+
+        it_behaves_like "it has exactly one tracker variable of type", :reader
+        it_behaves_like "a prefixed state reader"
+      end
+    end
 
     context "when a reader has already been defined" do
       before { operation_class.__send__(:state_reader, state_attribute) }
@@ -91,7 +132,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
   describe ".state_writer" do
     subject(:operation) do
-      operation_class.__send__(:state_writer, state_attribute)
+      operation_class.__send__(:state_writer, state_attribute, **definition_options)
       operation_class.new(example_state)
     end
 
@@ -101,6 +142,26 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
     it_behaves_like "it has exactly one tracker variable of type", :writer
     it_behaves_like "it has no tracker variables of type", :accessor
+
+    context "when prefix is given" do
+      include_context "with prefix option set"
+
+      before { operation.public_send(defined_writer_name, state_value) }
+
+      context "when prefix is true" do
+        let(:prefix) { true }
+
+        it_behaves_like "it has exactly one tracker variable of type", :writer
+        it_behaves_like "a prefixed state writer"
+      end
+
+      context "when prefix is a string" do
+        let(:prefix) { Faker::Lorem.unique.word }
+
+        it_behaves_like "it has exactly one tracker variable of type", :writer
+        it_behaves_like "a prefixed state writer"
+      end
+    end
 
     context "when a writer has already been defined" do
       before { operation_class.__send__(:state_writer, state_attribute) }
@@ -119,7 +180,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
   describe ".state_accessor" do
     subject(:operation) do
-      operation_class.__send__(:state_accessor, state_attribute)
+      operation_class.__send__(:state_accessor, state_attribute, **definition_options)
       operation_class.new(example_state)
     end
 
@@ -131,6 +192,46 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
     it_behaves_like "it has exactly one tracker variable of type", :writer
     it_behaves_like "it has exactly one tracker variable of type", :reader
     it_behaves_like "it has exactly one tracker variable of type", :accessor
+
+    context "when prefix is given" do
+      include_context "with prefix option set"
+
+      describe "reader" do
+        before { allow(example_state).to receive(state_attribute).and_return(state_value) }
+
+        context "when prefix is true" do
+          let(:prefix) { true }
+
+          it_behaves_like "it has exactly one tracker variable of type", :reader
+          it_behaves_like "a prefixed state writer"
+        end
+
+        context "when prefix is a string" do
+          let(:prefix) { Faker::Lorem.unique.word }
+
+          it_behaves_like "it has exactly one tracker variable of type", :reader
+          it_behaves_like "a prefixed state writer"
+        end
+      end
+
+      describe "writer" do
+        before { operation.public_send(defined_writer_name, state_value) }
+
+        context "when prefix is true" do
+          let(:prefix) { true }
+
+          it_behaves_like "it has exactly one tracker variable of type", :writer
+          it_behaves_like "a prefixed state writer"
+        end
+
+        context "when prefix is a string" do
+          let(:prefix) { Faker::Lorem.unique.word }
+
+          it_behaves_like "it has exactly one tracker variable of type", :writer
+          it_behaves_like "a prefixed state writer"
+        end
+      end
+    end
 
     context "when a writer has already been defined" do
       before { operation_class.__send__(:state_writer, state_attribute) }
