@@ -143,7 +143,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
         it_behaves_like "it has exactly one tracker variable of type", :writer
 
-        it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name) }
+        it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
       end
 
       context "when prefix is a string" do
@@ -151,7 +151,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
         it_behaves_like "it has exactly one tracker variable of type", :writer
 
-        it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name) }
+        it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
       end
     end
 
@@ -216,7 +216,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
           it_behaves_like "it has exactly one tracker variable of type", :writer
 
-          it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name) }
+          it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
         end
 
         context "when prefix is a string" do
@@ -224,7 +224,7 @@ RSpec.describe Flow::Operation::Accessors, type: :module do
 
           it_behaves_like "it has exactly one tracker variable of type", :writer
 
-          it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name) }
+          it { is_expected.to delegate_method("#{state_attribute}=").to(:state).with_prefix(prefix_name).with_arguments(state_attribute_value) }
         end
       end
     end
